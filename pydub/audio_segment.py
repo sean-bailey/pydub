@@ -193,8 +193,7 @@ class AudioSegment(object):
         # all arguments are given
         elif self.sample_width is not None:
             if len(data) % (self.sample_width * self.channels) != 0:
-                raise ValueError(
-                    "data length must be a multiple of '(sample_width * channels)'")
+                raise ValueError("data length must be a multiple of '(sample_width * channels)'")
 
             self.frame_width = self.channels * self.sample_width
             self._data = data
@@ -208,8 +207,7 @@ class AudioSegment(object):
         else:
             # normal construction
             try:
-                data = data if isinstance(
-                    data, (basestring, bytes)) else data.read()
+                data = data if isinstance(data, (basestring, bytes)) else data.read()
             except(OSError):
                 d = b''
                 reader = data.read(2 ** 31 - 1)
@@ -434,8 +432,7 @@ class AudioSegment(object):
         sample_width = max(seg.sample_width for seg in segs)
 
         return tuple(
-            seg.set_channels(channels).set_frame_rate(
-                frame_rate).set_sample_width(sample_width)
+            seg.set_channels(channels).set_frame_rate(frame_rate).set_sample_width(sample_width)
             for seg in segs
         )
 
@@ -547,8 +544,7 @@ class AudioSegment(object):
         except(OSError):
             input_file.flush()
             input_file.close()
-            input_file = NamedTemporaryFile(
-                mode='wb', delete=False, buffering=2 ** 31 - 1)
+            input_file = NamedTemporaryFile(mode='wb', delete=False, buffering=2 ** 31 - 1)
             if close_file:
                 file.close()
             close_file = True
@@ -838,8 +834,7 @@ class AudioSegment(object):
 
         if cover is not None:
             if cover.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff')) and format == "mp3":
-                conversion_command.extend(
-                    ["-i", cover, "-map", "0", "-map", "1", "-c:v", "mjpeg"])
+                conversion_command.extend(["-i", cover, "-map", "0", "-map", "1", "-c:v", "mjpeg"])
             else:
                 raise AttributeError(
                     "Currently cover images are only supported by MP3 files. The allowed image formats are: .tif, .jpg, .bmp, .jpeg and .png.")
@@ -972,8 +967,7 @@ class AudioSegment(object):
             fac = 0.5
             converted = fn(self._data, self.sample_width, fac, fac)
         elif channels == 1:
-            channels_data = [seg.get_array_of_samples()
-                             for seg in self.split_to_mono()]
+            channels_data = [seg.get_array_of_samples() for seg in self.split_to_mono()]
             frame_count = int(self.frame_count())
             converted = array.array(
                 channels_data[0].typecode,
@@ -1011,8 +1005,7 @@ class AudioSegment(object):
                 mono_data = samples_for_current_channel.tostring()
 
             mono_channels.append(
-                self._spawn(mono_data, overrides={
-                            "channels": 1, "frame_width": self.sample_width})
+                self._spawn(mono_data, overrides={"channels": 1, "frame_width": self.sample_width})
             )
 
         return mono_channels
@@ -1075,8 +1068,7 @@ class AudioSegment(object):
         DC offset from all available channels.
         """
         if channel and not 1 <= channel <= 2:
-            raise ValueError(
-                "channel value must be None, 1 (left) or 2 (right)")
+            raise ValueError("channel value must be None, 1 (left) or 2 (right)")
 
         if offset and not -1.0 <= offset <= 1.0:
             raise ValueError("offset value must be in range -1.0 to 1.0")
@@ -1102,8 +1094,7 @@ class AudioSegment(object):
             right_channel = remove_data_dc(right_channel, offset)
 
         left_channel = audioop.tostereo(left_channel, self.sample_width, 1, 0)
-        right_channel = audioop.tostereo(
-            right_channel, self.sample_width, 0, 1)
+        right_channel = audioop.tostereo(right_channel, self.sample_width, 0, 1)
 
         return self._spawn(data=audioop.add(left_channel, right_channel,
                                             self.sample_width))
@@ -1175,8 +1166,7 @@ class AudioSegment(object):
                 seg1_overlaid = seg1[pos:pos + seg2_len]
                 seg1_adjusted_gain = audioop.mul(seg1_overlaid, self.sample_width,
                                                  db_to_float(float(gain_during_overlay)))
-                output.write(audioop.add(
-                    seg1_adjusted_gain, seg2, sample_width))
+                output.write(audioop.add(seg1_adjusted_gain, seg2, sample_width))
             else:
                 output.write(audioop.add(seg1[pos:pos + seg2_len], seg2,
                                          sample_width))
